@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     
     # third party apps
     'test_without_migrations',
+    'rest_framework',
 
     # project apps
     'central_erros.core',

@@ -28,7 +28,8 @@ python manage.py test
 2. Envie as configurações para o heroku.
 3. Defina uma SECRET_KEY segura para a instância.
 4. Defina DEBUG=False
-5. Envie o código para o heroku.
+5. Defina ALLOWED_HOSTS=.herokuapp.com
+6. Envie o código para o heroku.
 
 ```console
 heroku create minhainstancia
