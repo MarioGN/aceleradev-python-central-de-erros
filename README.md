@@ -14,7 +14,7 @@ Sistema para centralizar registros de erros de aplicações. Projeto prático fi
 ```console
 git clone git@github.com:MarioGN/aceleradev-python-central-de-erros.git aceleradev-central-erros
 cd aceleradev-central-erros
-python -v venv .central
+python -m venv .central
 source .central/bin/activate
 pip install -r requirements.txt
 cp contrib/env-sample .env
@@ -32,8 +32,9 @@ python manage.py test
 
 ```console
 heroku create minhainstancia
-heroku config:push
+heroku git:remote -a minhainstancia
 heroku config:set SECRET_KEY='python contrib/secret_gen.py'
 heroku config:set DEBUG=False
+heroku config:set ALLOWED_HOSTS=.herokuapp.com
 git push heroku master --force
 ```
