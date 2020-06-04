@@ -5,67 +5,55 @@ from django.core.validators import ValidationError
 from central_erros.core.models import ErrorLog
 
 
-class ErrorLogModelTest(TestCase):
+class ErrorLogModelTestCase(TestCase):
     def setUp(self):
-        self.log = ErrorLog.objects.create(
+        self.obj = ErrorLog.objects.create(
             source='127.0.0.1',
             description='acceleration.Detail: <not found>',
             details='File "/app/source/core/service.py", line 182, in (*App).Error',
             raised_at=datetime.now()
         )
 
-    def test_create(self):
+    def test_error_log_created_should_exists(self):
         self.assertTrue(ErrorLog.objects.exists())
-
+    
+    def get_meta_field(self, field):
+        """ Recupera o field do modelo pelo nome. """
+        return ErrorLog._meta.get_field(field)
+    
     def test_source_cant_be_blank(self):
-        field = ErrorLog._meta.get_field('source')
-        self.assertFalse(field.blank)
+        self.assertFalse(self.get_meta_field('source').blank)
 
     def test_description_cant_be_blank(self):
-        field = ErrorLog._meta.get_field('description')
-        self.assertFalse(field.blank)
+        self.assertFalse(self.get_meta_field('description').blank)
 
     def test_details_cant_be_blank(self):
-        field = ErrorLog._meta.get_field('details')
-        self.assertFalse(field.blank)
+        self.assertFalse(self.get_meta_field('details').blank)
 
     def test_events_cant_be_blank(self):
-        field = ErrorLog._meta.get_field('events')
-        self.assertFalse(field.blank)
+        self.assertFalse(self.get_meta_field('details').blank)
 
     def test_events_cant_be_null(self):
-        field = ErrorLog._meta.get_field('events')
-        self.assertFalse(field.null)
+        self.assertFalse(self.get_meta_field('details').null)
 
     def test_events_default_to_1(self):
-        field = ErrorLog._meta.get_field('events')
-        self.assertEqual(field.default, 1)
+        self.assertEqual(self.get_meta_field('events').default, 1)
 
     def test_events_cant_be_less_than_1(self):
-        invalid_events_log = ErrorLog.objects.create(
-            source='127.0.0.1',
-            description='acceleration.Detail: <not found>',
-            details='File "/app/source/core/service.py", line 182, in (*App).Error',
-            events=0,
-            raised_at=datetime.now()
-        )
+        invalid_obj = self.obj
+        invalid_obj.events = 0
 
         with self.assertRaises(ValidationError):
-            invalid_events_log.full_clean()
-
-    def test_raised_at(self):
-        self.assertIsInstance(self.log.raised_at, datetime)
-
-    def test_raised_at_cant_be_null(self):
-        field = ErrorLog._meta.get_field('raised_at')
-        self.assertFalse(field.null)
+            invalid_obj.full_clean()
 
     def test_raised_at_cant_be_blank(self):
-        field = ErrorLog._meta.get_field('raised_at')
-        self.assertFalse(field.blank)
+        self.assertFalse(self.get_meta_field('raised_at').null)
+
+    def test_raised_at_cant_be_null(self):
+        self.assertFalse(self.get_meta_field('raised_at').null)
 
     def test_create_at(self):
-        self.assertIsInstance(self.log.created_at, datetime)
+        self.assertIsInstance(self.obj.created_at, datetime)
 
     def test_updated_at(self):
-        self.assertIsInstance(self.log.updated_at, datetime)
+        self.assertIsInstance(self.obj.updated_at, datetime)
