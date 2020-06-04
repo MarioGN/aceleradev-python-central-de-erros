@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework.generics import CreateAPIView
 
-# Create your views here.
+from central_erros.core.models import ErrorLog
+from central_erros.core.serializers import ErrorLogSerializer
+
+
+class CreateErrorLogAPIView(CreateAPIView):
+    queryset = ErrorLog.objects.all()
+    serializer_class = ErrorLogSerializer
