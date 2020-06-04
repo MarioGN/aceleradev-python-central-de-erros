@@ -35,3 +35,7 @@ class ErrorLogSerializerTest(TestCase):
     def test_events_field_content(self):
         data = self.serializer.data
         self.assertEqual(data['events'], 1)
+
+    def test_raised_at_field_content(self):
+        data = self.serializer.data
+        self.assertIsInstance(data['raised_at'], str)
