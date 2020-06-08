@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.urls import reverse
-
 from rest_framework.test import APIClient
 from rest_framework import status
 
@@ -15,10 +14,11 @@ VALID_PAYLOAD = {
 }
 
 
-class ErrorLogValidCreateAPIViewTestCase(TestCase):
+class ListCreateLogsValidAPIView(TestCase):
     def setUp(self):
         client = APIClient()
-        self.response = client.post(reverse('core:post-new-log'), VALID_PAYLOAD, format='json')
+        url = reverse('core:list-create-logs')
+        self.response = client.post(url, VALID_PAYLOAD)
 
     def test_post_create_should_return_status_201(self):
         self.assertEqual(status.HTTP_201_CREATED, self.response.status_code)
@@ -27,10 +27,10 @@ class ErrorLogValidCreateAPIViewTestCase(TestCase):
         self.assertEqual(len(ErrorLog.objects.all()), 1)
 
 
-class ErrorLogInvalidCreateAPIViewTestCase(TestCase):
+class ListCreateLogsValidAPIView(TestCase):
     def setUp(self):
         self.payload = VALID_PAYLOAD
-        self.url = reverse('core:post-new-log')
+        self.url = reverse('core:list-create-logs')
         self.client = APIClient()
 
     def _post_request(self, payload):
