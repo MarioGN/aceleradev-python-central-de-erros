@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from central_erros.api.models import ErrorLog
-from central_erros.api.serializers import ErrorLogSerializer
+from central_erros.api.serializers import ErrorLogSerializer, DetailsErrorLogSerializer
 
 
 class ListCreateErrorLogAPIView(ListCreateAPIView):
@@ -15,7 +15,7 @@ class ListCreateErrorLogAPIView(ListCreateAPIView):
 
 class RetrieveDestroyErrorLogAPIView(RetrieveDestroyAPIView):
     queryset = ErrorLog.objects.all()
-    serializer_class = ErrorLogSerializer
+    serializer_class = DetailsErrorLogSerializer
     lookup_field = 'id'
 
 

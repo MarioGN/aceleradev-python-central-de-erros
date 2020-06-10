@@ -4,7 +4,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from central_erros.api.models import ErrorLog
-from central_erros.api.serializers import ErrorLogSerializer
+from central_erros.api.serializers import ErrorLogSerializer, DetailsErrorLogSerializer
 
 
 VALID_PAYLOAD = {
@@ -38,7 +38,7 @@ class GETDetailErrorLogAPIView(TestCase):
 
     def test_get_serialized_data(self):
         obj = ErrorLog.objects.get(pk=1)
-        serializer = ErrorLogSerializer(obj)
+        serializer = DetailsErrorLogSerializer(obj)
         url = reverse('api:get-log', kwargs={'id': 1})
         response = self.client.get(url, format='json')
         self.assertEqual(response.data, serializer.data)
