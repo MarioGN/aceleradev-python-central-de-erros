@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from central_erros.api.models import ErrorLog
+from central_erros.api.serializers import ErrorLogSerializer
 
 
 VALID_PAYLOAD = {
@@ -14,11 +15,27 @@ VALID_PAYLOAD = {
     "date": "2020-06-04T13:41:28+00:00",
     "level": "ERROR",
     "env": "DEV",
-    "arquivado": "False"
 }
 
 
-class ListCreateLogsAPIView(TestCase):
+class GETListCreateLogsAPIView(TestCase):
+    def setUp(self):
+        ErrorLog.objects.create(**VALID_PAYLOAD)
+
+        client = APIClient()
+        url = reverse('api:list-create-logs')
+        self.response = client.get(url, format='json')
+
+    def test_get_should_return_status_200(self):
+        self.assertEqual(status.HTTP_200_OK, self.response.status_code)
+
+    def test_get_serialized_data(self):
+        logs = ErrorLog.objects.all()
+        serialized_data = ErrorLogSerializer(logs, many=True).data
+        self.assertEqual(self.response.data, serialized_data)
+
+
+class POSTListCreateLogsAPIView(TestCase):
     def setUp(self):
         client = APIClient()
         url = reverse('api:list-create-logs')
@@ -31,7 +48,7 @@ class ListCreateLogsAPIView(TestCase):
         self.assertEqual(len(ErrorLog.objects.all()), 1)
 
 
-class ListCreateLogsAPIViewInvalid(TestCase):
+class POSTInvalidListCreateLogsAPIView(TestCase):
     def setUp(self):
         self.payload = VALID_PAYLOAD
         self.url = reverse('api:list-create-logs')
