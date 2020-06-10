@@ -30,6 +30,9 @@ class ErrorLog(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def archive(self):
+        self.arquivado = True
+
     class Meta:
         verbose_name = 'Error Log'
 
