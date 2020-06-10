@@ -38,12 +38,12 @@ class PACTCHArchiveErrorLogAPIView(TestCase):
 
     def test_error_log_should_be_archived(self):
         obj = ErrorLog.objects.get(pk=2)
-        self.assertFalse(obj.arquivado)
+        self.assertFalse(obj.archived)
 
         url = reverse('api:archive-log', kwargs={'id': 2})
         response = self.client.patch(url, format='json')
         obj.refresh_from_db()
-        self.assertTrue(obj.arquivado)
+        self.assertTrue(obj.archived)
 
     
 

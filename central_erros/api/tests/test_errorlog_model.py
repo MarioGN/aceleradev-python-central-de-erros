@@ -17,7 +17,7 @@ class ErrorLogModelTestCase(TestCase):
             date=timezone.now(),
             level='ERROR',
             env='DEV',
-            arquivado=False,
+            archived=False,
         )
 
     def get_meta_field(self, field):
@@ -105,11 +105,11 @@ class ErrorLogModelTestCase(TestCase):
             self.obj.env = 'INVALID_OPTION'
             self.obj.full_clean()
 
-    def test_arquivado(self):
-        self.assertIsInstance(self.obj.arquivado, bool)
+    def test_archived(self):
+        self.assertIsInstance(self.obj.archived, bool)
 
-    def test_arquivado_default_to_false(self):
-        self.assertFalse(self.get_meta_field('arquivado').default)
+    def test_archived_default_to_false(self):
+        self.assertFalse(self.get_meta_field('archived').default)
 
     def test_create_at(self):
         self.assertIsInstance(self.obj.created_at, datetime.datetime)

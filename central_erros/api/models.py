@@ -25,13 +25,13 @@ class ErrorLog(models.Model):
     date = models.DateTimeField('Data')
     level = models.CharField('Level', max_length=16, choices=LOG_LEVELS)
     env = models.CharField('Ambiene', max_length=16, choices=LOG_ENVIRONMENTS)
-    arquivado = models.BooleanField('Arquivado', default=False)
+    archived = models.BooleanField('Arquivado', default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def archive(self):
-        self.arquivado = True
+        self.archived = True
 
     class Meta:
         verbose_name = 'Error Log'

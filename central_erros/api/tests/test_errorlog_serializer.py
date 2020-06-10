@@ -15,7 +15,6 @@ class ErrorLogSerializerTestCase(TestCase):
             date=timezone.now(),
             level='ERROR',
             env='DEV',
-            arquivado=False,
         )
 
         self.data = ErrorLogSerializer(instance=self.obj).data
