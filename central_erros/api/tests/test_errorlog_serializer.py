@@ -21,7 +21,7 @@ class ErrorLogSerializerTestCase(TestCase):
         self.data = ErrorLogSerializer(instance=self.obj).data
     
     def test_serializer_should_contains_expected_fields(self):
-        expected = set(['description', 'source', 'details', 'events', 'date', 'level', 'env', 'arquivado'])
+        expected = set(['description', 'source', 'details', 'events', 'date', 'level', 'env'])
         self.assertEqual(expected, set(self.data.keys()))
 
     def test_source_field_content(self):
@@ -56,6 +56,3 @@ class ErrorLogSerializerTestCase(TestCase):
         serializer = ErrorLogSerializer(instance=self.obj, data=self.data)
         self.assertFalse(serializer.is_valid())
         self.assertEqual(set(serializer.errors.keys()), set(['env']))
-
-    def test_arquivado_field_content(self):
-        self.assertEqual(self.obj.arquivado, self.data['arquivado'])

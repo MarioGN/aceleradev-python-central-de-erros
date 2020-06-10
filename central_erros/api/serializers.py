@@ -14,5 +14,5 @@ class ErrorLogSerializer(serializers.ModelSerializer):
         model = ErrorLog
         fields = [
             'description', 'source', 'details', 'events', 
-            'date', 'level', 'env', 'arquivado'
+            'date', 'level', 'env'
         ]
