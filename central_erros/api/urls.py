@@ -11,8 +11,8 @@ urlpatterns = [
          name='list-create-logs'),
     path('logs/<int:id>/',
          RetrieveDestroyErrorLogAPIView.as_view(),
-         name='get-log'),
+         name='get-delete-logs'),
     path('logs/<int:id>/archive/',
          ArchiveErrorLogAPIView.as_view(),
-         name='archive-log'),
+         name='archive-logs'),
 ] 

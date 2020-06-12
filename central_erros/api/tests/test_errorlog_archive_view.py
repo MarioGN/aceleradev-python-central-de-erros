@@ -27,12 +27,12 @@ class PACTCHArchiveErrorLogAPIView(TestCase):
         self.client = APIClient()
 
     def test_patch_archive_errorlog_should_return_status_204(self):
-        url = reverse('api:archive-log', kwargs={'id': 1})
+        url = reverse('api:archive-logs', kwargs={'id': 1})
         response = self.client.patch(url, format='json')
         self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
 
     def test_invalid_patch_archive_errorlog_should_return_status_404(self):
-        url = reverse('api:archive-log', kwargs={'id': 999})
+        url = reverse('api:archive-logs', kwargs={'id': 999})
         response = self.client.patch(url, format='json')
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
 
@@ -40,7 +40,7 @@ class PACTCHArchiveErrorLogAPIView(TestCase):
         obj = ErrorLog.objects.get(pk=2)
         self.assertFalse(obj.archived)
 
-        url = reverse('api:archive-log', kwargs={'id': 2})
+        url = reverse('api:archive-logs', kwargs={'id': 2})
         response = self.client.patch(url, format='json')
         obj.refresh_from_db()
         self.assertTrue(obj.archived)
