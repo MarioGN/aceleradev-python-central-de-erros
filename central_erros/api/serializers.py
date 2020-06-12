@@ -5,11 +5,10 @@ from central_erros.api.models import ErrorLog
 
 class ErrorLogSerializer(serializers.ModelSerializer):
     LEVEL_OPTIONS = ('CRITICAL', 'DEBUG', 'ERROR', 'WARNING', 'INFO')
-    ENV_OPTIONS = ('PRODUÇÃO', 'HOMOLOGAÇÃO', 'DEV')
+    ENV_OPTIONS = ('PRODUCTION', 'HOMOLOGATION', 'DEV')
 
     level = serializers.ChoiceField(choices=LEVEL_OPTIONS)
     env = serializers.ChoiceField(choices=ENV_OPTIONS)
-
     class Meta:
         model = ErrorLog
         fields = [

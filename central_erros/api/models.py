@@ -12,8 +12,8 @@ class ErrorLog(models.Model):
     )
 
     LOG_ENVIRONMENTS = (
-        ('PRODUÇÃO', 'PRODUÇÃO'),
-        ('HOMOLOGAÇÃO', 'HOMOLOGAÇÃO'),
+        ('PRODUCTION', 'PRODUCTION'),
+        ('HOMOLOGATION', 'HOMOLOGATION'),
         ('DEV', 'DEV'),
     )
 
