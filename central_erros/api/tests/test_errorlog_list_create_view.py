@@ -22,8 +22,8 @@ VALID_PAYLOAD = {
 class FilterENVGETListCreateLogsAPIView(TestCase):
     def setUp(self):
         self._make_logs(quantity=3)
-        self._make_logs(quantity=2, env='HOMOLOGAÇÃO')
-        self._make_logs(quantity=5, env='PRODUÇÃO')
+        self._make_logs(quantity=2, env='HOMOLOGATION')
+        self._make_logs(quantity=5, env='PRODUCTION')
 
         self.client = APIClient()
 
@@ -48,11 +48,11 @@ class FilterENVGETListCreateLogsAPIView(TestCase):
         self.assertEqual(3, len(response.data))
 
     def test_get_filter_errorlog_by_env_HOMOLOGACAO_should_return_2_logs(self):
-        response = self.client.get('/api/logs/', {'env': 'homologação'}, format='json')
+        response = self.client.get('/api/logs/', {'env': 'homologation'}, format='json')
         self.assertEqual(2, len(response.data))
 
     def test_get_filter_errorlog_by_env_produção_should_return_5_logs(self):
-        response = self.client.get('/api/logs/', {'env': 'PRODUÇÃO'}, format='json')
+        response = self.client.get('/api/logs/', {'env': 'production'}, format='json')
         self.assertEqual(5, len(response.data))
 
 

@@ -26,7 +26,7 @@ class ListCreateErrorLogAPIView(ListCreateAPIView):
         search = request.GET.get('search', None)
 
         if env is not None:
-            queryset = queryset.filter(env__iexact=env.upper())
+            queryset = queryset.filter(env__iexact=env)
         if ordering is not None and ordering in self.ordering_fields:
             queryset = queryset.order_by(ordering)
         if search_field is not None and search_field in self.search_fields and search is not None:
