@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # project apps
-    'central_erros.api'
+    'central_erros.api',
+    'central_erros.auth'
 ]
 
 REST_FRAMEWORK = {
