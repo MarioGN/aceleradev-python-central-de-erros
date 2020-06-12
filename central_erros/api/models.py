@@ -35,6 +35,7 @@ class ErrorLog(models.Model):
 
     class Meta:
         verbose_name = 'Error Log'
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.description

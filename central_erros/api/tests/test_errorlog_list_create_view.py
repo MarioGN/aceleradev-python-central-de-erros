@@ -45,18 +45,18 @@ class FilterENVGETListCreateLogsAPIView(TestCase):
 
     def test_get_filter_errorlog_by_env_DEV_should_return_3_logs(self):
         response = self.client.get('/api/logs/', {'env': 'dev'}, format='json')
-        self.assertEqual(3, len(response.data))
-
+        self.assertEqual(3, response.data['count'])
+        
     def test_get_filter_errorlog_by_env_HOMOLOGACAO_should_return_2_logs(self):
         response = self.client.get('/api/logs/', {'env': 'homologation'}, format='json')
-        self.assertEqual(2, len(response.data))
+        self.assertEqual(2, response.data['count'])
 
     def test_get_filter_errorlog_by_env_produção_should_return_5_logs(self):
         response = self.client.get('/api/logs/', {'env': 'production'}, format='json')
-        self.assertEqual(5, len(response.data))
+        self.assertEqual(5, response.data['count'])
 
 
-class OrderBeyFieldGETListCreateLogsAPIView(TestCase):
+class OrderByFieldGETListCreateLogsAPIView(TestCase):
     def setUp(self):
         self.client = APIClient()
 
@@ -77,7 +77,7 @@ class OrderBeyFieldGETListCreateLogsAPIView(TestCase):
         for evs in events_list:
             self._make_logs(events=evs)
         response = self.client.get('/api/logs/', {'ordering': 'events'}, format='json')
-        response_events = [int(log['events']) for log in response.data]
+        response_events = [int(log['events']) for log in response.data['results']]
         self.assertSequenceEqual(events_list, response_events)
 
     def test_ordering_errorlogs_by_events_field_descending(self):
@@ -85,7 +85,7 @@ class OrderBeyFieldGETListCreateLogsAPIView(TestCase):
         for evs in events_list:
             self._make_logs(events=evs)
         response = self.client.get('/api/logs/', {'ordering': '-events'}, format='json')
-        response_events = [int(log['events']) for log in response.data]
+        response_events = [int(log['events']) for log in response.data['results']]
         response_events.reverse()
         self.assertSequenceEqual(events_list, response_events)
 
@@ -94,7 +94,7 @@ class OrderBeyFieldGETListCreateLogsAPIView(TestCase):
         for lvl in level_list:
             self._make_logs(level=lvl)
         response = self.client.get('/api/logs/', {'ordering': 'level'}, format='json')
-        response_levels = [log['level'] for log in response.data]
+        response_levels = [log['level'] for log in response.data['results']]
         self.assertSequenceEqual(level_list, response_levels)
 
     def test_ordering_errorlogs_by_level_field_descending(self):
@@ -102,7 +102,7 @@ class OrderBeyFieldGETListCreateLogsAPIView(TestCase):
         for lvl in level_list:
             self._make_logs(level=lvl)
         response = self.client.get('/api/logs/', {'ordering': '-level'}, format='json')
-        response_levels = [log['level'] for log in response.data]
+        response_levels = [log['level'] for log in response.data['results']]
         level_list.reverse()
         self.assertSequenceEqual(level_list, response_levels)
 
@@ -136,32 +136,32 @@ class SearchFieldGETListCreateLogsAPIView(TestCase):
 
     def test_get_filter_errorlog_by_level_ERROR_should_return_2_logs(self):
         response = self.client.get('/api/logs/', {'field': 'level', 'search': 'ERROR'}, format='json')
-        self.assertEqual(2, len(response.data))
+        self.assertEqual(2, response.data['count'])
 
     def test_get_filter_errorlog_by_level_INFO_should_return_1_log(self):
         response = self.client.get('/api/logs/', {'field': 'level', 'search': 'INFO'}, format='json')
-        self.assertEqual(1, len(response.data))
+        self.assertEqual(1, response.data['count'])
 
     def test_get_filter_errorlog_by_level_WARNING_should_return_5_logs(self):
         response = self.client.get('/api/logs/', {'field': 'level', 'search': 'WARNING'}, format='json')
-        self.assertEqual(5, len(response.data))
+        self.assertEqual(5, response.data['count'])
         
     def test_get_filter_errorlog_by_description_should_return_8_log(self):
         response = self.client.get('/api/logs/', {'field': 'description', 'search': 'descript'}, format='json')
-        self.assertEqual(8, len(response.data))
+        self.assertEqual(8, response.data['count'])
 
     def test_get_filter_errorlog_by_description_should_return_3_log(self):
         response = self.client.get('/api/logs/', {'field': 'description', 'search': 'INFO'}, format='json')
-        self.assertEqual(3, len(response.data))
+        self.assertEqual(3, response.data['count'])
 
     def test_get_filter_errorlog_by_source_should_return_11_logs(self):
         response = self.client.get('/api/logs/', {'field': 'source', 'search': '127.0.0.1'}, format='json')
-        self.assertEqual(11, len(response.data))
+        self.assertEqual(11, response.data['count'])
 
 
     def test_get_filter_errorlog_by_source_should_return_1_log(self):
         response = self.client.get('/api/logs/', {'field': 'source', 'search': '149.10.145.90'}, format='json')
-        self.assertEqual(1, len(response.data))
+        self.assertEqual(1, response.data['count'])
 
 
 class GETListCreateLogsAPIView(TestCase):
@@ -178,7 +178,7 @@ class GETListCreateLogsAPIView(TestCase):
     def test_get_serialized_data(self):
         logs = ErrorLog.objects.all()
         serialized_data = ErrorLogSerializer(logs, many=True).data
-        self.assertEqual(self.response.data, serialized_data)
+        self.assertEqual(self.response.data['results'], serialized_data)
 
 
 class POSTListCreateLogsAPIView(TestCase):

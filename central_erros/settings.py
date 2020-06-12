@@ -46,12 +46,13 @@ INSTALLED_APPS = [
 
     # project apps
     'central_erros.api',
-    'central_erros.auth'
+    'central_erros.accounts',
 ]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5
+    'PAGE_SIZE': 10
 }
 
 MIDDLEWARE = [
