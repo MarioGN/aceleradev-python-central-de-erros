@@ -1,5 +1,9 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class ErrorLog(models.Model):
@@ -17,6 +21,8 @@ class ErrorLog(models.Model):
         ('DEV', 'DEV'),
     )
 
+    user = models.ForeignKey(
+                User, on_delete=models.CASCADE, related_name='logs')
     description = models.CharField('Descrição', max_length=256)
     source = models.GenericIPAddressField('Origem')
     details = models.TextField('Detalhes')
