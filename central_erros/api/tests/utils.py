@@ -21,6 +21,9 @@ class JWTAuthenticatedTestCase(TestCase):
 
     def _jwt_authenticate(self):
         user_data = {'username': 'apiuser', 'email': 'apiuser@email.com', 'password': 'passjwt01'}
+        self._perform_create_user_and_jwt_authenticate(user_data)
+
+    def _perform_create_user_and_jwt_authenticate(self, user_data):
         User.objects.create_user(**user_data)
         url = reverse('accounts:login')        
         response = self.client.post(url, user_data, format='json')

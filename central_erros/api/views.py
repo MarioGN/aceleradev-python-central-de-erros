@@ -1,11 +1,14 @@
 from django.http import Http404
+
 from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from central_erros.api.models import ErrorLog
 from central_erros.api.serializers import ErrorLogSerializer, DetailsErrorLogSerializer
+from central_erros.api.permissions import IsOwnerOrReadOnly
 
 
 class ListCreateErrorLogAPIView(ListCreateAPIView):
@@ -42,13 +45,18 @@ class ListCreateErrorLogAPIView(ListCreateAPIView):
 class RetrieveDestroyErrorLogAPIView(RetrieveDestroyAPIView):
     queryset = ErrorLog.objects.all()
     serializer_class = DetailsErrorLogSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     lookup_field = 'id'
 
 
 class ArchiveErrorLogAPIView(APIView):
+    permission_classes = permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
     def get_object(self, id):
         try:
-            return ErrorLog.objects.get(id=id)
+            obj = ErrorLog.objects.get(id=id)
+            self.check_object_permissions(self.request, obj)
+            return obj
         except ErrorLog.DoesNotExist:
             raise Http404
 

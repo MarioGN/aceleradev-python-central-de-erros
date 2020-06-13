@@ -35,13 +35,17 @@ class ErrorLog(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def archive(self):
-        self.archived = True
-
+    
     class Meta:
         verbose_name = 'Error Log'
         ordering = ['-created_at']
+
+    @property
+    def owner(self):
+        return self.user
+    
+    def archive(self):
+        self.archived = True
 
     def __str__(self):
         return self.description

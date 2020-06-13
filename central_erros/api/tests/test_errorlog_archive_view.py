@@ -31,4 +31,12 @@ class PACTCHArchiveErrorLogAPIView(JWTAuthenticatedTestCase):
         response = self.client.patch(url, format='json')
         obj.refresh_from_db()
         self.assertTrue(obj.archived)
+
+    def test_archive_errorlog_with_invalid_credentials_should_return_403(self):
+        user_data = {'username': 'anotheruser', 'email': 'anotheruser@email.com', 'password': 'secret123'}
+        self._perform_create_user_and_jwt_authenticate(user_data)   
+
+        url = reverse('api:archive-logs', kwargs={'id': 1})
+        response = self.client.patch(url, format='json')
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
   
