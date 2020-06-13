@@ -1,11 +1,17 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+
 from rest_framework.test import APIClient
 from rest_framework import status
 
 from central_erros.api.models import ErrorLog
 from central_erros.api.serializers import ErrorLogSerializer
+from .utils import JWTAuthenticatedTestCase
+
+
+User = get_user_model()
 
 
 VALID_PAYLOAD = {
@@ -19,25 +25,12 @@ VALID_PAYLOAD = {
 }
 
 
-class FilterENVGETListCreateLogsAPIView(TestCase):
+class FilterENVGETListCreateLogsAPIView(JWTAuthenticatedTestCase):
     def setUp(self):
+        super().setUp()
         self._make_logs(quantity=3)
         self._make_logs(quantity=2, env='HOMOLOGATION')
         self._make_logs(quantity=5, env='PRODUCTION')
-
-        self.client = APIClient()
-
-    def _make_logs(self, quantity=1, env='DEV', level='ERROR', events=1, description='description', source='127.0.0.1'):
-        for i in range(quantity):
-            ErrorLog.objects.create(
-                description=f'{description} {i}', 
-                source=source,
-                details=f'Error log at line {i}',
-                events=events,
-                date=timezone.now(),
-                level=level,
-                env=env,
-            )
 
     def test_get_simple_env_filter_should_return_status_200(self):
         response = self.client.get('/api/logs/', {'env': 'dev'}, format='json')
@@ -56,21 +49,9 @@ class FilterENVGETListCreateLogsAPIView(TestCase):
         self.assertEqual(5, response.data['count'])
 
 
-class OrderByFieldGETListCreateLogsAPIView(TestCase):
+class OrderByFieldGETListCreateLogsAPIView(JWTAuthenticatedTestCase):
     def setUp(self):
-        self.client = APIClient()
-
-    def _make_logs(self, quantity=1, env='DEV', level='ERROR', events=1, description='description', source='127.0.0.1'):
-        for i in range(quantity):
-            ErrorLog.objects.create(
-                description=f'{description} {i}', 
-                source=source,
-                details=f'Error log at line {i}',
-                events=events,
-                date=timezone.now(),
-                level=level,
-                env=env,
-            )
+        super().setUp()
 
     def test_ordering_errorlogs_by_events_field(self):
         events_list = [43, 89, 290]
@@ -107,28 +88,14 @@ class OrderByFieldGETListCreateLogsAPIView(TestCase):
         self.assertSequenceEqual(level_list, response_levels)
 
 
-class SearchFieldGETListCreateLogsAPIView(TestCase):
+class SearchFieldGETListCreateLogsAPIView(JWTAuthenticatedTestCase):
     def setUp(self):
+        super().setUp()
         self._make_logs(quantity=2)
         self._make_logs(quantity=1, level='INFO')
         self._make_logs(quantity=5, level='WARNING')
-
         self._make_logs(quantity=3, level='DEBUG', description='INFO LOG')
         self._make_logs(quantity=1, level='CRITICAL', description='CRITICAL ERROR', source='149.10.145.90')
-
-        self.client = APIClient()
-
-    def _make_logs(self, quantity=1, env='DEV', level='ERROR', events=1, description='description', source='127.0.0.1'):
-        for i in range(quantity):
-            ErrorLog.objects.create(
-                description=f'{description} {i}', 
-                source=source,
-                details=f'Error log at line {i}',
-                events=events,
-                date=timezone.now(),
-                level=level,
-                env=env,
-            )
 
     def test_get_field_filter_should_return_status_200(self):
         response = self.client.get('/api/logs/', {'field': 'level', 'search': 'ERROR'}, format='json')
@@ -158,19 +125,18 @@ class SearchFieldGETListCreateLogsAPIView(TestCase):
         response = self.client.get('/api/logs/', {'field': 'source', 'search': '127.0.0.1'}, format='json')
         self.assertEqual(11, response.data['count'])
 
-
     def test_get_filter_errorlog_by_source_should_return_1_log(self):
         response = self.client.get('/api/logs/', {'field': 'source', 'search': '149.10.145.90'}, format='json')
         self.assertEqual(1, response.data['count'])
 
 
-class GETListCreateLogsAPIView(TestCase):
+class GETListCreateLogsAPIView(JWTAuthenticatedTestCase):
     def setUp(self):
-        ErrorLog.objects.create(**VALID_PAYLOAD)
-
-        client = APIClient()
+        super().setUp()
+        user = User.objects.all().first()
+        ErrorLog.objects.create(user=user, **VALID_PAYLOAD)
         url = reverse('api:list-create-logs')
-        self.response = client.get(url, format='json')
+        self.response = self.client.get(url, format='json')
 
     def test_get_should_return_status_200(self):
         self.assertEqual(status.HTTP_200_OK, self.response.status_code)
@@ -181,11 +147,11 @@ class GETListCreateLogsAPIView(TestCase):
         self.assertEqual(self.response.data['results'], serialized_data)
 
 
-class POSTListCreateLogsAPIView(TestCase):
+class POSTListCreateLogsAPIView(JWTAuthenticatedTestCase):
     def setUp(self):
-        client = APIClient()
-        url = reverse('api:list-create-logs')
-        self.response = client.post(url, VALID_PAYLOAD)
+        super().setUp()
+        self.url = reverse('api:list-create-logs')
+        self.response = self.client.post(self.url, VALID_PAYLOAD)
 
     def test_post_create_should_return_status_201(self):
         self.assertEqual(status.HTTP_201_CREATED, self.response.status_code)
@@ -194,11 +160,11 @@ class POSTListCreateLogsAPIView(TestCase):
         self.assertEqual(len(ErrorLog.objects.all()), 1)
 
 
-class POSTInvalidListCreateLogsAPIView(TestCase):
+class POSTInvalidListCreateLogsAPIView(JWTAuthenticatedTestCase):
     def setUp(self):
-        self.payload = VALID_PAYLOAD
+        super().setUp()
         self.url = reverse('api:list-create-logs')
-        self.client = APIClient()
+        self.payload = VALID_PAYLOAD
 
     def _post_request(self, payload):
         return self.client.post(self.url, payload, format='json')
@@ -223,8 +189,7 @@ class POSTInvalidListCreateLogsAPIView(TestCase):
 
         for field_name, subtest_description in missing_fields:
             with self.subTest(subtest_description):
-                data = self.payload.copy()
+                data = VALID_PAYLOAD.copy()
                 data.pop(field_name)
                 response = self._post_request(data)
-                
                 self.assertIn("required", response.data[field_name][0].code)

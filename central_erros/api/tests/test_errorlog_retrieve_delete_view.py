@@ -1,30 +1,18 @@
 from django.test import TestCase
 from django.urls import reverse
+
 from rest_framework.test import APIClient
 from rest_framework import status
 
 from central_erros.api.models import ErrorLog
 from central_erros.api.serializers import ErrorLogSerializer, DetailsErrorLogSerializer
+from .utils import JWTAuthenticatedTestCase
 
 
-VALID_PAYLOAD = {
-    "description": "acceleration.Detail: <not found>",   
-    "source": "127.0.0.1",
-    "details": "File \"/app/source/core/service.py\", line 182, in (*App).Error",
-    "events": "10",
-    "date": "2020-06-04T13:41:28+00:00",
-    "level": "ERROR",
-    "env": "DEV",
-}
-
-
-class GETDetailErrorLogAPIView(TestCase):
+class GETDetailErrorLogAPIView(JWTAuthenticatedTestCase):
     def setUp(self):
-        for i in range(1, 6):
-            VALID_PAYLOAD['description'] = f'Error Log {i}'
-            ErrorLog.objects.create(**VALID_PAYLOAD)
-
-        self.client = APIClient()
+        super().setUp()
+        self._make_logs(quantity=6)
 
     def test_get_single_log_should_return_status_200(self):
         url = reverse('api:get-delete-logs', kwargs={'id': 1})
@@ -44,13 +32,10 @@ class GETDetailErrorLogAPIView(TestCase):
         self.assertEqual(response.data, serializer.data)
 
 
-class DELETEDetailErrorLogAPIView(TestCase):
+class DELETEDetailErrorLogAPIView(JWTAuthenticatedTestCase):
     def setUp(self):
-        for i in range(1, 6):
-            VALID_PAYLOAD['description'] = f'Error Log {i}'
-            ErrorLog.objects.create(**VALID_PAYLOAD)
-
-        self.client = APIClient()
+        super().setUp()
+        self._make_logs()
 
     def test_delete_log_should_return_status_204(self):
         url = reverse('api:get-delete-logs', kwargs={'id': 1})

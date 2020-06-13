@@ -3,13 +3,21 @@ import datetime
 from django.test import TestCase
 from django.utils import timezone
 from django.core.validators import ValidationError
+from django.contrib.auth import get_user_model
 
 from central_erros.api.models import ErrorLog
 
 
+User = get_user_model()
+
+
 class ErrorLogModelTestCase(TestCase):
     def setUp(self):
+        user_data = {'username': 'apiuser', 'email': 'apiuser@email.com', 'password': 'passjwt01'}
+        user = User.objects.create_user(**user_data)
+
         self.obj = ErrorLog.objects.create(
+            user=user,
             description='acceleration.Detail: <not found>',
             source='127.0.0.1',
             details='File "/app/source/core/service.py", line 182, in (*App).Error',
@@ -17,7 +25,6 @@ class ErrorLogModelTestCase(TestCase):
             date=timezone.now(),
             level='ERROR',
             env='DEV',
-            archived=False,
         )
 
     def get_meta_field(self, field):
