@@ -12,7 +12,7 @@ User = get_user_model()
 class CustomJWTSerializerTestcase(TestCase):
     def setUp(self):
         user_data = {'username': 'apiuser', 'email': 'apiuser@email.com', 'password': 'passjwt01'}
-        user = User.objects.create_user(**user_data)       
+        user = User.objects.create_user(**user_data)
 
     def test_serializer_is_valid(self):
         data = {'email': 'apiuser@email.com', 'password': 'passjwt01'}
