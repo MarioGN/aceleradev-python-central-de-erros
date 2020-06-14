@@ -13,32 +13,13 @@ from central_erros.api.permissions import IsOwnerOrReadOnly
 
 class ListCreateErrorLogAPIView(ListCreateAPIView):
     serializer_class = ErrorLogSerializer
-    search_fields = ('level', 'description', 'source')
-    ordering_fields = ('level', '-level', 'events', '-events')
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        request = self.request
-        qs = ErrorLog.objects.all()
-        qs = self._filter(self.request, qs)
-        return qs
-
-    def _filter(self, request, queryset):
-        env = request.GET.get('env', None)
-        ordering = request.GET.get('ordering', None)
-        search_field = request.GET.get('field', None)
-        search = request.GET.get('search', None)
-
-        if env is not None:
-            queryset = queryset.filter(env__iexact=env)
-        if ordering is not None and ordering in self.ordering_fields:
-            queryset = queryset.order_by(ordering)
-        if search_field is not None and search_field in self.search_fields and search is not None:
-            field_query = {f'{search_field}__icontains': search}
-            queryset = queryset.filter(**field_query)
-
+        query_params = self.request.query_params
+        queryset = ErrorLog.objects.filter_logs(query_params=query_params)
         return queryset
 
 
