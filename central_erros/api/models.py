@@ -71,6 +71,7 @@ class ErrorLog(models.Model):
     
     def archive(self):
         self.archived = True
+        self.save()
 
     def __str__(self):
         return self.description

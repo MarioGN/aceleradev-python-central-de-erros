@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 
 from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView
 from rest_framework.views import APIView
@@ -34,15 +35,11 @@ class ArchiveErrorLogAPIView(APIView):
     permission_classes = permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
     def get_object(self, id):
-        try:
-            obj = ErrorLog.objects.get(id=id)
-            self.check_object_permissions(self.request, obj)
-            return obj
-        except ErrorLog.DoesNotExist:
-            raise Http404
+        obj = get_object_or_404(ErrorLog, id=id)
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def patch(self, request, id):
         obj = self.get_object(id)
         obj.archive()
-        obj.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
