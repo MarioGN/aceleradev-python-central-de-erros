@@ -19,7 +19,7 @@ class ListCreateErrorLogAPIView(ListCreateAPIView):
 
     def get_queryset(self):
         query_params = self.request.query_params
-        queryset = ErrorLog.objects.filter_logs(query_params=query_params)
+        queryset = ErrorLog.objects.filter_logs(query_params)
         return queryset
 
 
