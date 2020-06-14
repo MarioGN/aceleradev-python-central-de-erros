@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from central_erros.api.models import ErrorLog
+from central_erros.accounts.serializers import UserSerializer
 
 
 class ErrorLogSerializer(serializers.ModelSerializer):
@@ -18,9 +19,11 @@ class ErrorLogSerializer(serializers.ModelSerializer):
 
 
 class DetailsErrorLogSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = ErrorLog
         fields = [
-            'id', 'description', 'source', 'details', 'events', 
-            'date', 'level', 'env', 'archived'
+            'id', 'user', 'description', 'source', 'details', 
+            'events', 'date', 'level', 'env', 'archived'
         ]
