@@ -1,3 +1,5 @@
+from django.urls import reverse
+
 from rest_framework import serializers
 
 from central_erros.api.models import ErrorLog
@@ -10,12 +12,17 @@ class ErrorLogSerializer(serializers.ModelSerializer):
 
     level = serializers.ChoiceField(choices=LEVEL_OPTIONS)
     env = serializers.ChoiceField(choices=ENV_OPTIONS)
+    uri = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = ErrorLog
         fields = [
-            'description', 'source', 'events', 
+            'uri', 'description', 'source', 'events', 
             'date', 'level', 'env'
         ]
+
+    def get_uri(self, obj):
+        return reverse('api:get-delete-logs', kwargs={'id': obj.id})
 
 
 class DetailsErrorLogSerializer(serializers.ModelSerializer):
