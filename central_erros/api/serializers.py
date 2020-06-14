@@ -13,7 +13,7 @@ class ErrorLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = ErrorLog
         fields = [
-            'description', 'source', 'details', 'events', 
+            'description', 'source', 'events', 
             'date', 'level', 'env'
         ]
 

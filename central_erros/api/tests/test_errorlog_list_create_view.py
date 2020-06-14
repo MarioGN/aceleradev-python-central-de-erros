@@ -181,7 +181,6 @@ class POSTInvalidListCreateLogsAPIView(JWTAuthenticatedTestCase):
             # tupla (nome_do_campo, descricao_do_subteste)
             ('description', 'Missing the description field'),
             ('source', 'Missing the source field'),
-            ('details', 'Missing the details field'),
             ('date', 'Missing the date field'),
             ('level', 'Missing the level field'),
             ('env', 'Missing the env field'),
