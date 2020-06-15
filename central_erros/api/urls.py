@@ -1,18 +1,12 @@
 from django.urls import path
-from central_erros.api.views import (ListCreateErrorLogAPIView, 
-                                     RetrieveDestroyErrorLogAPIView, 
-                                     ArchiveErrorLogAPIView)
-
+from central_erros.api import views
 app_name = 'api'
 
 urlpatterns = [
     path('logs/', 
-         ListCreateErrorLogAPIView.as_view(), 
+         views.ListCreateErrorLogAPIView.as_view(), 
          name='list-create-logs'),
     path('logs/<int:id>/',
-         RetrieveDestroyErrorLogAPIView.as_view(),
-         name='get-delete-logs'),
-    path('logs/<int:id>/archive/',
-         ArchiveErrorLogAPIView.as_view(),
-         name='archive-logs'),
+         views.RetrieveArchiveDestroyErrorLogAPIView.as_view(),
+         name='get-archive-delete-logs'),
 ] 

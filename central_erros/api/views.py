@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 
-from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
@@ -23,22 +23,14 @@ class ListCreateErrorLogAPIView(ListCreateAPIView):
         return queryset
 
 
-class RetrieveDestroyErrorLogAPIView(RetrieveDestroyAPIView):
+class RetrieveArchiveDestroyErrorLogAPIView(RetrieveUpdateDestroyAPIView):
     queryset = ErrorLog.objects.all()
     serializer_class = DetailsErrorLogSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     lookup_field = 'id'
 
-
-class ArchiveErrorLogAPIView(APIView):
-    permission_classes = permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-
-    def get_object(self, id):
+    def patch(self, request, id):
         obj = get_object_or_404(ErrorLog, id=id)
         self.check_object_permissions(self.request, obj)
-        return obj
-
-    def patch(self, request, id):
-        obj = self.get_object(id)
         obj.archive()
         return Response(status=status.HTTP_204_NO_CONTENT)

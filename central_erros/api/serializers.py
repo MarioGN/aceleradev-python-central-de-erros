@@ -22,7 +22,7 @@ class ErrorLogSerializer(serializers.ModelSerializer):
         ]
 
     def get_uri(self, obj):
-        return reverse('api:get-delete-logs', kwargs={'id': obj.id})
+        return reverse('api:get-archive-delete-logs', kwargs={'id': obj.id})
 
 
 class DetailsErrorLogSerializer(serializers.ModelSerializer):

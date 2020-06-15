@@ -15,19 +15,19 @@ class GETDetailErrorLogAPIView(JWTAuthenticatedTestCase):
         self._make_logs(quantity=6)
 
     def test_get_single_log_should_return_status_200(self):
-        url = reverse('api:get-delete-logs', kwargs={'id': 1})
+        url = reverse('api:get-archive-delete-logs', kwargs={'id': 1})
         response = self.client.get(url, format='json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
     def test_get_single_invalid_log_should_return_status_404(self):
-        url = reverse('api:get-delete-logs', kwargs={'id': 999})
+        url = reverse('api:get-archive-delete-logs', kwargs={'id': 999})
         response = self.client.get(url, format='json')
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
 
     def test_get_serialized_data(self):
         obj = ErrorLog.objects.get(pk=1)
         serializer = DetailsErrorLogSerializer(obj)
-        url = reverse('api:get-delete-logs', kwargs={'id': 1})
+        url = reverse('api:get-archive-delete-logs', kwargs={'id': 1})
         response = self.client.get(url, format='json')
         self.assertEqual(response.data, serializer.data)
 
@@ -38,18 +38,50 @@ class DELETEDetailErrorLogAPIView(JWTAuthenticatedTestCase):
         self._make_logs()
 
     def test_delete_log_should_return_status_204(self):
-        url = reverse('api:get-delete-logs', kwargs={'id': 1})
+        url = reverse('api:get-archive-delete-logs', kwargs={'id': 1})
         response = self.client.delete(url, format='json')
         self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
 
     def test_get_invalid_log_should_return_status_404(self):
-        url = reverse('api:get-delete-logs', kwargs={'id': 999})
+        url = reverse('api:get-archive-delete-logs', kwargs={'id': 999})
         response = self.client.delete(url, format='json')
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
 
     def test_delete_errorlog_with_invalid_credentials_should_return_403(self):
         user_data = {'username': 'anotheruser', 'email': 'anotheruser@email.com', 'password': 'secret123'}
         self._perform_create_user_and_jwt_authenticate(user_data)
-        url = reverse('api:get-delete-logs', kwargs={'id': 1})
+        url = reverse('api:get-archive-delete-logs', kwargs={'id': 1})
         response = self.client.delete(url, format='json')
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
+
+class PACTCHArchiveErrorLogAPIView(JWTAuthenticatedTestCase):
+    def setUp(self):
+        super().setUp()
+        self._make_logs(quantity=6)
+
+    def test_patch_archive_errorlog_should_return_status_204(self):
+        url = reverse('api:get-archive-delete-logs', kwargs={'id': 1})
+        response = self.client.patch(url, format='json')
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+
+    def test_invalid_patch_archive_errorlog_should_return_status_404(self):
+        url = reverse('api:get-archive-delete-logs', kwargs={'id': 999})
+        response = self.client.patch(url, format='json')
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_error_log_should_be_archived(self):
+        obj = ErrorLog.objects.get(pk=2)
+        self.assertFalse(obj.archived)
+        url = reverse('api:get-archive-delete-logs', kwargs={'id': 2})
+        response = self.client.patch(url, format='json')
+        obj.refresh_from_db()
+        self.assertTrue(obj.archived)
+
+    def test_archive_errorlog_with_invalid_credentials_should_return_403(self):
+        user_data = {'username': 'anotheruser', 'email': 'anotheruser@email.com', 'password': 'secret123'}
+        self._perform_create_user_and_jwt_authenticate(user_data)   
+
+        url = reverse('api:get-archive-delete-logs', kwargs={'id': 1})
+        response = self.client.patch(url, format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
