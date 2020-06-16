@@ -33,19 +33,19 @@ class FilterENVGETListCreateLogsAPIView(JWTAuthenticatedTestCase):
         self._make_logs(quantity=5, env='PRODUCTION')
 
     def test_get_simple_env_filter_should_return_status_200(self):
-        response = self.client.get('/api/logs/', {'env': 'dev'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'env': 'dev'}, format='json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
     def test_get_filter_errorlog_by_env_DEV_should_return_3_logs(self):
-        response = self.client.get('/api/logs/', {'env': 'dev'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'env': 'dev'}, format='json')
         self.assertEqual(3, response.data['count'])
         
     def test_get_filter_errorlog_by_env_HOMOLOGACAO_should_return_2_logs(self):
-        response = self.client.get('/api/logs/', {'env': 'homologation'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'env': 'homologation'}, format='json')
         self.assertEqual(2, response.data['count'])
 
     def test_get_filter_errorlog_by_env_produção_should_return_5_logs(self):
-        response = self.client.get('/api/logs/', {'env': 'production'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'env': 'production'}, format='json')
         self.assertEqual(5, response.data['count'])
 
 
@@ -57,7 +57,7 @@ class OrderByFieldGETListCreateLogsAPIView(JWTAuthenticatedTestCase):
         events_list = [43, 89, 290]
         for evs in events_list:
             self._make_logs(events=evs)
-        response = self.client.get('/api/logs/', {'ordering': 'events'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'ordering': 'events'}, format='json')
         response_events = [int(log['events']) for log in response.data['results']]
         self.assertSequenceEqual(events_list, response_events)
 
@@ -65,7 +65,7 @@ class OrderByFieldGETListCreateLogsAPIView(JWTAuthenticatedTestCase):
         events_list = [43, 89, 290]
         for evs in events_list:
             self._make_logs(events=evs)
-        response = self.client.get('/api/logs/', {'ordering': '-events'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'ordering': '-events'}, format='json')
         response_events = [int(log['events']) for log in response.data['results']]
         response_events.reverse()
         self.assertSequenceEqual(events_list, response_events)
@@ -74,7 +74,7 @@ class OrderByFieldGETListCreateLogsAPIView(JWTAuthenticatedTestCase):
         level_list = ['CRITICAL', 'DEBUG', 'ERROR', 'INFO', 'WARNING']
         for lvl in level_list:
             self._make_logs(level=lvl)
-        response = self.client.get('/api/logs/', {'ordering': 'level'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'ordering': 'level'}, format='json')
         response_levels = [log['level'] for log in response.data['results']]
         self.assertSequenceEqual(level_list, response_levels)
 
@@ -82,7 +82,7 @@ class OrderByFieldGETListCreateLogsAPIView(JWTAuthenticatedTestCase):
         level_list = ['CRITICAL', 'DEBUG', 'ERROR', 'INFO', 'WARNING']
         for lvl in level_list:
             self._make_logs(level=lvl)
-        response = self.client.get('/api/logs/', {'ordering': '-level'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'ordering': '-level'}, format='json')
         response_levels = [log['level'] for log in response.data['results']]
         level_list.reverse()
         self.assertSequenceEqual(level_list, response_levels)
@@ -98,35 +98,35 @@ class SearchFieldGETListCreateLogsAPIView(JWTAuthenticatedTestCase):
         self._make_logs(quantity=1, level='CRITICAL', description='CRITICAL ERROR', source='149.10.145.90')
 
     def test_get_field_filter_should_return_status_200(self):
-        response = self.client.get('/api/logs/', {'field': 'level', 'search': 'ERROR'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'field': 'level', 'search': 'ERROR'}, format='json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
     def test_get_filter_errorlog_by_level_ERROR_should_return_2_logs(self):
-        response = self.client.get('/api/logs/', {'field': 'level', 'search': 'ERROR'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'field': 'level', 'search': 'ERROR'}, format='json')
         self.assertEqual(2, response.data['count'])
 
     def test_get_filter_errorlog_by_level_INFO_should_return_1_log(self):
-        response = self.client.get('/api/logs/', {'field': 'level', 'search': 'INFO'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'field': 'level', 'search': 'INFO'}, format='json')
         self.assertEqual(1, response.data['count'])
 
     def test_get_filter_errorlog_by_level_WARNING_should_return_5_logs(self):
-        response = self.client.get('/api/logs/', {'field': 'level', 'search': 'WARNING'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'field': 'level', 'search': 'WARNING'}, format='json')
         self.assertEqual(5, response.data['count'])
         
     def test_get_filter_errorlog_by_description_should_return_8_log(self):
-        response = self.client.get('/api/logs/', {'field': 'description', 'search': 'descript'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'field': 'description', 'search': 'descript'}, format='json')
         self.assertEqual(8, response.data['count'])
 
     def test_get_filter_errorlog_by_description_should_return_3_log(self):
-        response = self.client.get('/api/logs/', {'field': 'description', 'search': 'INFO'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'field': 'description', 'search': 'INFO'}, format='json')
         self.assertEqual(3, response.data['count'])
 
     def test_get_filter_errorlog_by_source_should_return_11_logs(self):
-        response = self.client.get('/api/logs/', {'field': 'source', 'search': '127.0.0.1'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'field': 'source', 'search': '127.0.0.1'}, format='json')
         self.assertEqual(11, response.data['count'])
 
     def test_get_filter_errorlog_by_source_should_return_1_log(self):
-        response = self.client.get('/api/logs/', {'field': 'source', 'search': '149.10.145.90'}, format='json')
+        response = self.client.get('/v1/api/logs/', {'field': 'source', 'search': '149.10.145.90'}, format='json')
         self.assertEqual(1, response.data['count'])
 
 
